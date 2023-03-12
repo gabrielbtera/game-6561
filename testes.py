@@ -104,7 +104,6 @@ def make_move(state: list, move: tuple):
 
     elif move[0] == UP:
        player3.slideUPOuDown(new_state, UP)
-
     elif move[0] == DOWN:
        player3.slideUPOuDown(new_state, DOWN)
     elif move[0] == LEFT:
@@ -138,6 +137,7 @@ def is_terminal(state):
     # Se nenhuma das condições acima for atendida, o jogo não terminou
     return False
 
+lista = []
 
 # Define a função minimax
 def minimax(state, depth, alpha, beta, maximizing_player, opc):
@@ -151,24 +151,29 @@ def minimax(state, depth, alpha, beta, maximizing_player, opc):
     if maximizing_player:
         max_score = float('-inf')
         best_move = None
-        for move in get_valid_moves(state, opc):
+        valids = get_valid_moves(state, opc)
+        ln_valids = len(valids)-1
+        for move in valids:
             print(move)
             new_state = make_move(state, move)
-            _, score = minimax(new_state, depth-1, alpha, beta, False, opc)
+            _, score = minimax(new_state, ln_valids-1, alpha, beta, False, opc)
             if score > max_score:
                 max_score = score
                 best_move = move
             alpha = max(alpha, max_score)
             if beta <= alpha:
                 break
+        lista.append((best_move, max_score))
         return best_move, max_score
     else:
         min_score = float('inf')
         best_move = None
-        for move in get_valid_moves(state, opc):
+        valids = get_valid_moves(state, opc)
+        ln_valids = len(valids)-1
+        for move in valids:
             new_state = make_move(state, move)
             
-            _, score = minimax(new_state, depth-1, alpha, beta, True, opc)
+            _, score = minimax(new_state, ln_valids-1, alpha, beta, True, opc)
             if score < min_score:
                 min_score = score
                 best_move = move
@@ -197,19 +202,21 @@ tab1 = [
     ]
 
 tab2 = [
-    [ 0, {'cor': 'V', 'valor' : 9},  {'cor': 'C', 'valor' : 1}, 0],
-    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
+    [ 0, {'cor': 'V', 'valor' : 9},  {'cor': 'V', 'valor' : 1}, 0],
+    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'C', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
     [{'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 3}, {'cor': 'V', 'valor' : 3}, {'cor': 'C', 'valor' : 9}],
     [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
     ]
 
-tab2 = [
-    [ {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 2},  {'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 1}],
-    [0, 0, 0,0],
+tab3 = [
+    [ {'cor': 'V', 'valor' : 2}, {'cor': 'A', 'valor' : 2},  {'cor': 'C', 'valor' : 1}, {'cor': 'C', 'valor' : 1}],
+    [{'cor': 'V', 'valor' : 1}, 0, 0,0],
     [0, 0, 0,0],
     [0, 0, 0,0]
     ]
 
 # get_valid_moves(tab1, 'A')
 
-print(minimax(tab2, 3, float('-inf'), float('inf'),True,  ''))
+print(minimax(tab2, 6, float('-inf'), float('inf'),True,  ''))
+
+# print('\n', lista)

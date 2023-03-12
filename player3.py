@@ -103,8 +103,8 @@ def slideUPOuDown(tabuleiro: list, opcao: str, canSlide = False):
         
         listaColuna = removeZerosDeUmaListaECompletaComZerosADireita(listaColuna)
 
-        if EMPTY in listaColuna:
-            slide = True
+        # if EMPTY in listaColuna:
+        #     slide = True
 
         if not canSlide:
             for linha in range(4):
@@ -159,8 +159,8 @@ def slideRigthOuLeft(tabuleiro: list, opcao:str, canSlide =False) -> None:
 
         listaColuna = removeZerosDeUmaListaECompletaComZerosADireita(listaColuna)
 
-        if EMPTY in listaColuna:
-            slide = True
+        # if EMPTY in listaColuna:
+        #     slide = True
 
         if opcao == RIGHT:
             listaColuna.reverse()
