@@ -2,6 +2,7 @@
 
 import sys
 import random
+from copy import deepcopy
 
 VALORES = [11, 12, 13, 14, 21, 22,23, 24, 31, 32,33,34, 41, 42, 43, 44]
 
@@ -29,6 +30,28 @@ def getDadosaAcao(indices: str) -> str or tuple:
         i , j = int(indices[0]) -1 , int(indices[1])-1
         return  i, j
     return indices
+
+
+def getSlideVazio(opc: str, key: str):
+    opcLU = {
+        '1110': True,
+        '1100': True,
+        '1000': True, 
+        '1111': True,
+        '0000' : True
+    }
+    opcRD = {
+        '0111': True,
+        '0011' : True,
+        '0001' : True,
+        '1111': True,
+        '0000' : True
+    } 
+
+    if opc == 'R' or  opc == 'D':
+        return opcRD.get(key)
+    elif opc == 'L' or opc == 'U':
+        return opcLU.get(key)
 
 
 def deslizarOTabuleiro(letra: str) -> str:
@@ -74,11 +97,18 @@ def slideUPOuDown(tabuleiro: list, opcao: str, canSlide = False):
     for coluna in range(4):
         
         listaColuna = []
+        makeSlide = ''
         for linha in range(0, 4):
             casa_n  = tabuleiro[linha][coluna]
+            makeSlide += '1' if casa_n else '0'
             if casa_n:
                 listaColuna.append(casa_n)
+
         completaZerosAdireita(listaColuna)
+
+        if not getSlideVazio(opcao, makeSlide) and not slide:
+            slide = True
+
 
         i = 0
         while i < 3:
@@ -103,17 +133,16 @@ def slideUPOuDown(tabuleiro: list, opcao: str, canSlide = False):
         
         listaColuna = removeZerosDeUmaListaECompletaComZerosADireita(listaColuna)
 
-        # if EMPTY in listaColuna:
-        #     slide = True
-
         if not canSlide:
             for linha in range(4):
                 tabuleiro[linha][coluna] = listaColuna[linha]
             
     if opcao == DOWN:
         tabuleiro.reverse()
+    
 
     # print(tabuleiro)   
+    
     return slide
     
    
@@ -122,18 +151,26 @@ def slideUPOuDown(tabuleiro: list, opcao: str, canSlide = False):
 def slideRigthOuLeft(tabuleiro: list, opcao:str, canSlide =False) -> None:
 
     # print(tabuleiro)
+    
 
     slide = False
     for linha in range(4):
+        makeSlide = ''
         listaColuna = []
         for coluna in range(0, 4):
             casa_n  = tabuleiro[linha][coluna]
+            makeSlide += '1' if casa_n else '0'
             if casa_n:
                 listaColuna.append(casa_n)
+
+        if not getSlideVazio(opcao, makeSlide) and not slide:
+            slide = True
         
         if opcao == RIGHT:
             listaColuna.reverse()
         completaZerosAdireita(listaColuna)
+
+        
 
 
         i = 0
@@ -165,15 +202,14 @@ def slideRigthOuLeft(tabuleiro: list, opcao:str, canSlide =False) -> None:
         if opcao == RIGHT:
             listaColuna.reverse()
         
+        # print(opcao,listaColuna)
+        
         # print(listaColuna, '\n')
        
         if not canSlide:
             for coluna in range(4):
                 tabuleiro[linha][coluna] = listaColuna[coluna]
             
-        
-        
-        
      
     return slide
 
@@ -203,12 +239,23 @@ tab1 = [
     [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
     ]
 
+tab3 = deepcopy(tab)
+
 # slideUPOuDown(tab, 'D')
 
 # print(slideUPOuDown(tab, 'U', True))
 
-# slideRigthOuLeft(tab, 'L')
-                
+tab4 = [[{'cor': 'C', 'valor': 2}, {'cor': 'C', 'valor': 1}, 0, 0], [{'cor': 'C', 'valor': 1}, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+tab5 = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, {...}], [{...}, {...}, {...}, {...}]]
+
+# print(slideRigthOuLeft(tab4, 'L', True)) # -> L
+# print(slideRigthOuLeft(tab4, 'R', True)) # -> L
+
+# print(tab4)
+# slideUPOuDown(tab3, 'U') # -> R
+
+
+
 
             
             

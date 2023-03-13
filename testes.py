@@ -1,5 +1,8 @@
 import player3
 from copy import deepcopy
+import sys
+
+sys.setrecursionlimit(10000) # Set the recursion limit to 1500 calls
 
 # Define as constantes do jogo
 
@@ -54,7 +57,7 @@ def can_slide(tabuleiro, direcao):
 
 
 
-def get_valid_moves(state, player):
+def get_valid_moves(state: list, player: str):
     """
     Retorna uma lista de movimentos válidos para o jogador especificado a partir do estado atual do jogo.
     """
@@ -145,17 +148,17 @@ def minimax(state, depth, alpha, beta, maximizing_player, opc):
     Executa a busca minimax até a profundidade especificada e retorna a melhor jogada possível
     para o jogador atual a partir do estado atual do jogo.
     """
-    if depth == 0 or is_terminal(state):
+    if depth <= 0 or is_terminal(state):
         return None, evaluate(state, opc)
 
     if maximizing_player:
         max_score = float('-inf')
         best_move = None
         valids = get_valid_moves(state, opc)
-        ln_valids = len(valids)-1
+        ln_valids = len(valids)-1 * 20
         for move in valids:
-            print(move)
             new_state = make_move(state, move)
+            
             _, score = minimax(new_state, ln_valids-1, alpha, beta, False, opc)
             if score > max_score:
                 max_score = score
@@ -169,10 +172,9 @@ def minimax(state, depth, alpha, beta, maximizing_player, opc):
         min_score = float('inf')
         best_move = None
         valids = get_valid_moves(state, opc)
-        ln_valids = len(valids)-1
+        ln_valids = len(valids)-1 * 20
         for move in valids:
             new_state = make_move(state, move)
-            
             _, score = minimax(new_state, ln_valids-1, alpha, beta, True, opc)
             if score < min_score:
                 min_score = score
@@ -209,14 +211,17 @@ tab2 = [
     ]
 
 tab3 = [
-    [ {'cor': 'V', 'valor' : 2}, {'cor': 'A', 'valor' : 2},  {'cor': 'C', 'valor' : 1}, {'cor': 'C', 'valor' : 1}],
-    [{'cor': 'V', 'valor' : 1}, 0, 0,0],
+    [ {'cor': 'V', 'valor' : 2}, {'cor': 'A', 'valor' : 2},  {'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 1}],
+
     [0, 0, 0,0],
+     [{'cor': 'C', 'valor' : 1}, 0, 0,0],
     [0, 0, 0,0]
     ]
 
 # get_valid_moves(tab1, 'A')
 
-print(minimax(tab2, 6, float('-inf'), float('inf'),True,  ''))
+print(minimax(tab3, 11, float('-inf'), float('inf'),True,  ''))
+
+# print(get_valid_moves(tab3, ''))
 
 # print('\n', lista)
