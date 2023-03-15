@@ -111,3 +111,41 @@ def melhorLugarCor(tabuleiro: list, cor: str):
 print(melhorLugarCor(testes.tab3, 'V'))
 
 
+tab = [
+    [ 0, {'cor': 'C', 'valor' : 1}, 0, {'cor': 'V', 'valor' : 9}],
+    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
+    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, 0, {'cor': 'C', 'valor' : 1}],
+    [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
+    ]
+
+
+tab1 = [
+    [ {'cor': 'C', 'valor' : 1}, {'cor': 'V', 'valor' : 1},  {'cor': 'C', 'valor' : 1}, {'cor': 'C', 'valor' : 2}],
+    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
+    [{'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 3}, {'cor': 'V', 'valor' : 3}, {'cor': 'C', 'valor' : 9}],
+    [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
+    ]
+
+tab2 = [
+    [ 0, {'cor': 'V', 'valor' : 9},  {'cor': 'V', 'valor' : 1}, 0],
+    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'C', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
+    [{'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 3}, {'cor': 'V', 'valor' : 3}, {'cor': 'C', 'valor' : 9}],
+    [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
+    ]
+
+tab3 = [
+    [{'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 2},  {'cor': 'C', 'valor' : 1}, {'cor': 'V', 'valor' : 9}],
+    [{'cor': 'C', 'valor' : 1}, 0, 0,0],
+    [0, 0, 0,0],
+    [0, 0, 0,{'cor': 'C', 'valor' : 1}],
+    ]
+
+tab4 = [
+    [0, 0,  0, 0],
+    [0, 0, 0,0],
+    [0, 0, 0,0],
+    [0, 0, 0,0],
+    ]
+
+
+

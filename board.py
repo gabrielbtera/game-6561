@@ -57,20 +57,6 @@ def slideLeftOuRight(tabuleiro: list, direcao: str) -> tuple:
     
     return (tabuleiro, slide)
 
-tab3 = [
-    [{'cor': 'V', 'valor' : 2}, {'cor': 'A', 'valor' : 2},  {'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 1}],
-     [0, 0, {'cor': 'A', 'valor' : 1},{'cor': 'V', 'valor' : 2}],
-    [0, 0, 0,0],
-    [0, 0, 0,0]
-    ]
-
-
-tab = [
-    [ 0, {'cor': 'C', 'valor' : 1},0 , {'cor': 'V', 'valor' : 9} ],
-    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
-    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, 0, {'cor': 'C', 'valor' : 1}],
-    [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
-    ]
 
 
 
@@ -122,6 +108,21 @@ def slideUpDwon(tabuleiro: list, direcao: str) -> tuple:
                 tabuleiro[linha][coluna] = valores_nao_nulos[linha]
     return (tabuleiro, slide)
 
+
+tab3 = [
+    [{'cor': 'V', 'valor' : 2}, {'cor': 'A', 'valor' : 2},  {'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 1}],
+     [0, 0, {'cor': 'A', 'valor' : 1},{'cor': 'V', 'valor' : 2}],
+    [0, 0, 0,0],
+    [0, 0, 0,0]
+    ]
+
+
+tab = [
+    [ 0, {'cor': 'C', 'valor' : 1},0 , {'cor': 'V', 'valor' : 9} ],
+    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
+    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, 0, {'cor': 'C', 'valor' : 1}],
+    [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
+    ]
 
 
 

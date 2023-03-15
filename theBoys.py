@@ -1,4 +1,5 @@
-import board
+#!/usr/bin/env python3
+
 from copy import deepcopy
 import sys
 import time
@@ -26,6 +27,113 @@ RIGHT = 'R'
 
 
 
+def slideLeftOuRight(tabuleiro: list, direcao: str) -> tuple:
+    
+    tabuleiro = deepcopy(tabuleiro)
+
+    slide = False
+    # Percorre a matriz linha por linha, da direita para a esquerda
+
+    for linha in range(len(tabuleiro)):
+        # Inicializa uma lista para armazenar as pecas do tabuleiro
+        pecas_tabuleiro = []
+        # Percorre a linha e adiciona os valores não nulos à lista
+        if direcao == 'L':
+            for coluna in range(len(tabuleiro[linha])):
+                if tabuleiro[linha][coluna] != 0:
+                    pecas_tabuleiro.append(tabuleiro[linha][coluna])
+        else:
+            for coluna in range(len(tabuleiro) - 1, -1, -1):
+                if tabuleiro[linha][coluna] != 0:
+                    pecas_tabuleiro.append(tabuleiro[linha][coluna])
+                    
+        # for coluna in range(len(tabuleiro[linha])):
+        #     if tabuleiro[linha][coluna] != 0:
+        #         pecas_tabuleiro.append(tabuleiro[linha][coluna])
+        indice = 0
+        while indice < len(pecas_tabuleiro) - 1:
+            
+            if pecas_tabuleiro[indice]['cor'] != pecas_tabuleiro[indice+1]['cor'] and pecas_tabuleiro[indice]['valor'] == pecas_tabuleiro[indice+1]['valor']:
+                del pecas_tabuleiro[indice]
+                tamanho_tab = len(pecas_tabuleiro)
+                if tamanho_tab  >= indice:
+                    del pecas_tabuleiro[indice]
+                if tamanho_tab < indice:
+                    del pecas_tabuleiro[indice+1]
+                continue
+            if pecas_tabuleiro[indice]['cor'] == pecas_tabuleiro[indice+1]['cor'] and pecas_tabuleiro[indice]['valor'] == pecas_tabuleiro[indice+1]['valor']:
+                pecas_tabuleiro[indice] = {'cor': pecas_tabuleiro[indice]['cor'], 'valor': pecas_tabuleiro[indice]['valor'] * 3}
+                del pecas_tabuleiro[indice+1]
+                indice += 1
+                continue
+            
+            indice += 1
+       
+        
+        if direcao == 'R':
+            pecas_tabuleiro.reverse()
+            pecas_tabuleiro = [0] * (len(tabuleiro[linha]) - len(pecas_tabuleiro)) + pecas_tabuleiro
+
+        elif direcao == 'L':
+            pecas_tabuleiro = pecas_tabuleiro + [0] * (len(tabuleiro[linha]) - len(pecas_tabuleiro))
+        
+
+        if tabuleiro[linha] != pecas_tabuleiro:
+            slide = True
+            tabuleiro[linha] = pecas_tabuleiro
+    
+    return (tabuleiro, slide)
+
+
+def slideUpDwon(tabuleiro: list, direcao: str) -> tuple:
+
+    tabuleiro = deepcopy(tabuleiro)
+
+    slide = False 
+
+    # Percorre a matriz coluna por coluna, de cima para baixo ou de baixo para cima
+    for coluna in range(len(tabuleiro)):
+        valores_nao_nulos = []
+
+        if direcao == 'U':
+            for linha in range(len(tabuleiro)):
+                if tabuleiro[linha][coluna] != 0:
+                    valores_nao_nulos.append(tabuleiro[linha][coluna])
+        else:
+            for linha in range(len(tabuleiro) - 1, -1, -1):
+                if tabuleiro[linha][coluna] != 0:
+                    valores_nao_nulos.append(tabuleiro[linha][coluna])
+            
+        
+        indice = 0
+        while indice < len(valores_nao_nulos) - 1:
+            if valores_nao_nulos[indice]['cor'] != valores_nao_nulos[indice+1]['cor'] and valores_nao_nulos[indice]['valor'] == valores_nao_nulos[indice+1]['valor']:
+                del valores_nao_nulos[indice]
+                tamanho_tab = len(valores_nao_nulos)
+                if tamanho_tab  >= indice:
+                    del valores_nao_nulos[indice]
+                if tamanho_tab < indice:
+                    del valores_nao_nulos[indice+1]
+                continue
+            if valores_nao_nulos[indice]['cor'] == valores_nao_nulos[indice+1]['cor'] and valores_nao_nulos[indice]['valor'] == valores_nao_nulos[indice+1]['valor']:
+                valores_nao_nulos[indice] = {'cor': valores_nao_nulos[indice]['cor'], 'valor': valores_nao_nulos[indice]['valor'] * 3}
+                del valores_nao_nulos[indice+1]
+               
+            indice += 1
+
+        if direcao == 'U':
+             valores_nao_nulos = valores_nao_nulos + [0] * (len(tabuleiro) - len(valores_nao_nulos))
+        else:
+            valores_nao_nulos.reverse()
+            valores_nao_nulos = [0] * (len(tabuleiro) - len(valores_nao_nulos)) + valores_nao_nulos
+
+        for linha in range(len(tabuleiro)):
+            if tabuleiro[linha][coluna] != valores_nao_nulos[linha]:
+                slide = True
+                tabuleiro[linha][coluna] = valores_nao_nulos[linha]
+    return (tabuleiro, slide)
+
+
 def avaliacao(state: list, player: str) -> int:
     """
     Retorna a pontuação de um determinado estado do jogo para o jogador especificado.
@@ -50,13 +158,13 @@ def avaliacao(state: list, player: str) -> int:
 def fazSlide(tabuleiro, direcao) -> bool:
 
     if direcao == 'L':
-       return board.slideLeftOuRight(tabuleiro, 'L')[1]
+       return slideLeftOuRight(tabuleiro, 'L')[1]
     if direcao == 'R':
-       return board.slideLeftOuRight(tabuleiro, 'R')[1]
+       return slideLeftOuRight(tabuleiro, 'R')[1]
     if direcao == 'U':
-        return board.slideUpDwon(tabuleiro, 'U')[1]
+        return slideUpDwon(tabuleiro, 'U')[1]
     if direcao == 'D':
-        return board.slideUpDwon(tabuleiro, 'D')[1]
+        return slideUpDwon(tabuleiro, 'D')[1]
     
 
 def pegaMovimentosValidos(tabuleiro: list, player: str):
@@ -102,15 +210,25 @@ def executarMovimentos(tabuleiro: list, move: tuple) -> list:
         new_state[move[1]][move[2]] = {'cor': CINZA, 'valor': 1}
 
     elif move[0] == UP:
-       new_state = board.slideUpDwon(new_state, UP)[0]
+       new_state = slideUpDwon(new_state, UP)[0]
     elif move[0] == DOWN:
-       new_state = board.slideUpDwon(new_state, DOWN)[0]
+       new_state = slideUpDwon(new_state, DOWN)[0]
     elif move[0] == LEFT:
-       new_state = board.slideLeftOuRight(new_state, LEFT)[0]
+       new_state = slideLeftOuRight(new_state, LEFT)[0]
     elif move[0] == RIGHT:
-       new_state = board.slideLeftOuRight(new_state, RIGHT)[0]
+       new_state = slideLeftOuRight(new_state, RIGHT)[0]
     return new_state
-    
+
+def simulaMovimento(tabuleiro: list):
+
+    if fazSlide(tabuleiro, UP):
+        return True
+    if fazSlide(tabuleiro, DOWN):
+        return True
+    if fazSlide(tabuleiro, LEFT):
+        return True
+    if fazSlide(tabuleiro, RIGHT):
+        return True
     
 
 
@@ -121,14 +239,18 @@ def is_terminal(state):
     Retorna True se o jogo terminou, False caso contrário.
     """
 
-    print(len(pegaMovimentosValidos(state, '')))
     global tempo_inicial
+    movimenta = simulaMovimento(state)
+
+    if movimenta:
+        return False
+    
     # Verifica se o tabuleiro está completamente preenchido
-    if all(cell != EMPTY for row in state for cell in row) and not len(pegaMovimentosValidos(state, '')):
+    if all(cell != EMPTY for row in state for cell in row):
         return True
 
     # Verifica se algum jogador não tem mais peças no tabuleiro
-    if not any(EMPTY in row for row in state) and not len(pegaMovimentosValidos(state, '')):
+    if not any(EMPTY in row for row in state):
         return True
 
     # # Verifica se algum jogador já venceu
@@ -145,7 +267,7 @@ def is_terminal(state):
 
 
 
-
+from itertools import permutations
 
 # Define a função minimax
 def minimax(tabuleiro, profundidade, alpha, beta, maximizando_player, opc):
@@ -161,6 +283,7 @@ def minimax(tabuleiro, profundidade, alpha, beta, maximizando_player, opc):
         max_score = float('-inf')
         best_move = None
         valids = pegaMovimentosValidos(tabuleiro, opc)
+        
         for move in valids:
             new_state = executarMovimentos(tabuleiro, move)
             _, score = minimax(new_state, profundidade-1, alpha, beta, False, opc)
@@ -229,7 +352,8 @@ def coresProximoMovimento(tabuleiro: list, cor: str):
     valores = []
     for validos in final:
         pos, val = validos
-        movimentosValidos.remove(pos)
+        if pos in movimentosValidos:
+            movimentosValidos.remove(pos)
         valores.append(val['cor'])
     
     for color in opcoesCores:
@@ -282,45 +406,11 @@ def melhorLugarCor(tabuleiro: list, cor: str) -> tuple or bool:
 
 
 
-tab = [
-    [ 0, {'cor': 'C', 'valor' : 1}, 0, {'cor': 'V', 'valor' : 9}],
-    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
-    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, 0, {'cor': 'C', 'valor' : 1}],
-    [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
-    ]
-
-
-tab1 = [
-    [ {'cor': 'C', 'valor' : 1}, {'cor': 'V', 'valor' : 1},  {'cor': 'C', 'valor' : 1}, {'cor': 'C', 'valor' : 2}],
-    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
-    [{'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 3}, {'cor': 'V', 'valor' : 3}, {'cor': 'C', 'valor' : 9}],
-    [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
-    ]
-
-tab2 = [
-    [ 0, {'cor': 'V', 'valor' : 9},  {'cor': 'V', 'valor' : 1}, 0],
-    [{'cor': 'V', 'valor' : 3}, {'cor': 'A', 'valor' : 1}, {'cor': 'C', 'valor' : 9}, {'cor': 'C', 'valor' : 3} ],
-    [{'cor': 'C', 'valor' : 2}, {'cor': 'C', 'valor' : 3}, {'cor': 'V', 'valor' : 3}, {'cor': 'C', 'valor' : 9}],
-    [{'cor': 'A', 'valor' : 3}, {'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 9}, {'cor': 'C', 'valor' : 1}]
-    ]
-
-tab3 = [
-    [{'cor': 'V', 'valor' : 1}, {'cor': 'A', 'valor' : 2},  {'cor': 'C', 'valor' : 1}, {'cor': 'V', 'valor' : 9}],
-    [{'cor': 'C', 'valor' : 1}, 0, 0,0],
-    [0, 0, 0,0],
-    [0, 0, 0,{'cor': 'C', 'valor' : 1}],
-    ]
-
-tab4 = [
-    [0, 0,  0, 0],
-    [0, 0, 0,0],
-    [0, 0, 0,0],
-    [0, 0, 0,0],
-    ]
-
-print(minimax(tab, 16, float('-inf'), float('inf'),True,  ''))
-
 def pegarQuantidadeDeVazios(tabuleiro: list) -> str:
+    """
+    Esta funcao verifica se o tabuleiro esta vazio, se sim retorna
+    uma posicao radomizaada se nao retorna vazio
+    """
     cont = 0
     for i in range(4):
         for j in range(4):
@@ -342,6 +432,8 @@ def setNovaPecaTabuleiro(tabuleiro: list, peca: tuple) -> None:
     _, i, j = peca
     tabuleiro[i][j] = getFormataPeca(peca)
     return f'{i+1}{j+1}'
+
+
 
 def mainNovaPeca(tabuleiro: list, cor: str) -> str:
 
@@ -365,18 +457,23 @@ def mainMovimento(tabuleiro: list, opc= ''):
     def getMovimento(resultado: tuple) -> tuple:
         return resultado[0]
     
+    
+   
+
    
     resultadoMinimax = minimax(tabuleiro, PROFUNDIDADE, float('-inf'), float('inf'),True,  '')
     movimento = getMovimento(resultadoMinimax)
     novo_tab =  executarMovimentos(tabuleiro, movimento)
-    for i in len(novo_tab):
+
+    for i in range(len(novo_tab)):
         tabuleiro[i] = novo_tab[i]
+
     return movimento[0]
 
 
 
 def getAcao(tipoCor: int) -> str:
-    opcoes = {0: 'B', 
+    opcoes = {0: 'A', 
               1: 'C', 
               2 : 'D1',
               3: 'V', 
@@ -384,16 +481,52 @@ def getAcao(tipoCor: int) -> str:
               }
     return opcoes[tipoCor]
 
+def acaoOponente(tipoCor: int ) -> str:
+    opcoes = {0: 'V', 
+              1: 'D1', 
+              2 : 'A',
+              3: 'C', 
+              4 : 'D1'
+              }
+    return opcoes[tipoCor]
+
+
+def escreveTabuleiro(tabAntes, tabDepois):
+    tamanho = len(tabAntes)
+    for i in range(tamanho):
+        tabAntes[i] = tabDepois[i]
+
+def executarMovimentosOponente(tabuleiro , opcao, contador, player):
+    if opcao in ['U', 'D']:
+        tab, sli = slideUpDwon(tabuleiro, opcao)
+        escreveTabuleiro(tabuleiro, tab)
+        return sli
+    elif opcao in ['L', 'R']:
+        tab, sli = slideLeftOuRight(tabuleiro, opcao)
+        escreveTabuleiro(tabuleiro, tab)
+        return sli
+    else:
+        i,j = int(opcao[0])-1, int(opcao[1])-1
+    
+        if tabuleiro[i][j] == EMPTY:
+            cor = acaoOponente(contador) if player == 'A' else getAcao(contador)
+            tabuleiro[i][j] = {'cor': cor, 'valor': 1}
+            return True
+        else:
+            return False
+
+
+
 
 TABULEIRO = [[0,0,0, 0] for _ in range(4)]
 
 def main():
 
-    entrada = sys.stdin.readline()
+    entrada = sys.stdin.readline().strip()
     
     contadorJogadas = 0
     contadorIteracoes = 0
-    if (entrada.strip() == "A"):
+    if (entrada == "A"):
         
         while (True):
             if contadorJogadas > 4:
@@ -420,20 +553,17 @@ def main():
                 if not dado:
                     print(mainMovimento(TABULEIRO))
                 else:
-                    print()
+                    print(dado)
+                sys.stdout.flush()
+            
+            # for i in TABULEIRO:
+            #     print(i)
 
+            entrada = sys.stdin.readline().strip()
 
-
-
-        
-
-            print(str(lc))
-
-            sys.stdout.flush()
-
-            entrada = sys.stdin.readline()
-
-            acao = getAcao(entrada)
+            oponente = executarMovimentosOponente(TABULEIRO, entrada, contadorJogadas, entrada)
+            # for i in TABULEIRO:
+            #     print(i)
 
             contadorJogadas += 1
             contadorIteracoes += 1
@@ -446,36 +576,43 @@ def main():
         # Estou jogando como Order
         memoria = []
         while (True):
-            if (entrada.strip() == "Quit"):
+            entrada = sys.stdin.readline().strip()
+
+            if contadorJogadas > 4:
+                contadorJogadas = 0
+
+            if entrada.strip() == "Quit":
                 break
-            lc = random.randint(11, 44)
-            # memoria.append(entrada[1]+entrada[2])
-            # Escolha aleatoria de peca existente
-            # random.shuffle(memoria)
-            # peca = memoria[0]
-            # memoria.remove(peca)
-            # Laço para definir local destino
-            # Tem que respeitar horizontal ou vertical
-            # random.shuffle(linhas)
-            # random.shuffle(colunas)
-            # lc = linhas[0]+colunas[0]
-            # while ((lc in memoria) or (lc[0]!=peca[0]) or (lc[1]!=peca[1])):
-            #     random.shuffle(linhas)
-            #     random.shuffle(colunas)
-            #     lc = linhas[0]+colunas[0]
-            # memoria.append(lc)
-            # #Saida da jogada
-            # print(peca+lc)
-            lc = random.randint(11, 44);
-
-            print(lc)
-
-            sys.stdout.flush()
-            # Leitura da jogada do adversario Chaos
             
-            entrada = sys.stdin.readline()
+            if contadorIteracoes == 999:
+                print('Quit')
+                sys.stdout.flush()
+                break
 
+            
+            oponente = executarMovimentosOponente(TABULEIRO, entrada, contadorJogadas, entrada)
+            
 
+            if contadorJogadas in [0,2,3]:
+                cor = acaoOponente(contadorJogadas)
+                posicao = mainNovaPeca(TABULEIRO, cor)
+                print(posicao, 'ultima', contadorJogadas)
+                sys.stdout.flush()
+                if posicao == 'Quit':
+                    break
 
-# main()
+            if contadorJogadas in [1,4]:
+                dado = pegarQuantidadeDeVazios(TABULEIRO)
+                print('aqui', contadorJogadas, dado)
+                if not dado:
+                    print(mainMovimento(TABULEIRO))
+                else:
+                    print(dado)
+                sys.stdout.flush()
+        
+        
+            contadorJogadas += 1
+            contadorIteracoes += 1
+
+main()
 
