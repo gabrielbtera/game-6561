@@ -29,6 +29,12 @@ RIGHT = 'R'
 
 def slideLeftOuRight(tabuleiro: list, direcao: str) -> tuple:
     
+    """
+    Faz o deslizamento e verifica tambem se o deslizamento eh feito ou nao
+    para a esquerda L ou para direita R
+
+    """
+    
     tabuleiro = deepcopy(tabuleiro)
 
     slide = False
@@ -47,9 +53,7 @@ def slideLeftOuRight(tabuleiro: list, direcao: str) -> tuple:
                 if tabuleiro[linha][coluna] != 0:
                     pecas_tabuleiro.append(tabuleiro[linha][coluna])
                     
-        # for coluna in range(len(tabuleiro[linha])):
-        #     if tabuleiro[linha][coluna] != 0:
-        #         pecas_tabuleiro.append(tabuleiro[linha][coluna])
+      
         indice = 0
         while indice < len(pecas_tabuleiro) - 1:
             
@@ -86,7 +90,11 @@ def slideLeftOuRight(tabuleiro: list, direcao: str) -> tuple:
 
 
 def slideUpDwon(tabuleiro: list, direcao: str) -> tuple:
+    """
+    Faz o deslizamento e verifica tambem se o deslizamento eh feito ou nao
+    para a esquerda L ou para direita R
 
+    """
     tabuleiro = deepcopy(tabuleiro)
 
     slide = False 
@@ -137,25 +145,31 @@ def slideUpDwon(tabuleiro: list, direcao: str) -> tuple:
 def avaliacao(state: list, player: str) -> int:
     """
     Retorna a pontuação de um determinado estado do jogo para o jogador especificado.
+    Adcio
     """
     zeros = 0
     score = 0
     for i in range(4):
         for j in range(4):
-            # Add points for each tile that is a multiple of 3
             if state[i][j] != EMPTY:
                 if state[i][j]['valor'] % 3 == 0:
+                    # Adiciona uma pontuacao para cada pedra que seja multipla de 3
                     score += (state[i][j]['valor'] // 3) 
-                # Subtract points for each tile that is not a multiple of 3
+              
                 else:
+                    # Subitrai uma pontuacao para cada pedra que nao seja multipla de 3
                     score -= (state[i][j]['valor'] // 3)
             else:
-                zeros += 1
+                zeros += 1 # Faz uma conta de quantos espacos vazios existem no tabuleiro
+    
+    # Retorna a soma dos multiplos ou nao e dos zeros, equilibrando a ideia 
+    # de ter mais pontos e espacos vazios pra jogar
     return score + zeros
 
 
 
 def fazSlide(tabuleiro, direcao) -> bool:
+    # Unifica as funcoes de slide e as executa
 
     if direcao == 'L':
        return slideLeftOuRight(tabuleiro, 'L')[1]
@@ -217,9 +231,12 @@ def executarMovimentos(tabuleiro: list, move: tuple) -> list:
        new_state = slideLeftOuRight(new_state, LEFT)[0]
     elif move[0] == RIGHT:
        new_state = slideLeftOuRight(new_state, RIGHT)[0]
+    # Retorna uma novo espaco de estados
     return new_state
 
 def simulaMovimento(tabuleiro: list):
+    # Auxilia no caso base da minimax verificando se no tabuleiro com todos os espacos preenchidos
+    # ainda se pode fazer algum algum movimento
 
     if fazSlide(tabuleiro, UP):
         return True
@@ -240,7 +257,7 @@ def is_terminal(state):
     """
 
     global tempo_inicial
-    movimenta = simulaMovimento(state)
+    movimenta = simulaMovimento(state) # ver se existe algum movimento se o tabuleiro estiver preenchido
 
     if movimenta:
         return False
@@ -253,11 +270,8 @@ def is_terminal(state):
     if not any(EMPTY in row for row in state):
         return True
 
-    # # Verifica se algum jogador já venceu
-    # for player in [BLUE, RED, GREY]:
-    #     if evaluate(state, player) == 4:
-    #         return True
-    if (time.time() - tempo_inicial  >= 6):
+    # Se a funcao esta de morando mais de 3 segundos pra responder, isso para a execucao dela
+    if (time.time() - tempo_inicial  >= 3):
         tempo_inicial = time.time()
         return True
     
@@ -269,27 +283,30 @@ def is_terminal(state):
 
 from itertools import permutations
 
-# Define a função minimax
+# Define a função minimax alpha beta
 def minimax(tabuleiro, profundidade, alpha, beta, maximizando_player, opc):
     """
     Executa a busca minimax até a profundidade especificada e retorna a melhor jogada possível
     para o jogador atual a partir do estado atual do jogo.
     """
+    # Caso base da funcao
     if profundidade == 0 or is_terminal(tabuleiro):
-        return None, avaliacao(tabuleiro, opc)
+        return None, avaliacao(tabuleiro, opc) ## Funcao de avaliacao
     
 
     if maximizando_player:
         max_score = float('-inf')
         best_move = None
-        valids = pegaMovimentosValidos(tabuleiro, opc)
+        valids = pegaMovimentosValidos(tabuleiro, opc) # Lista de movimentos validos
         
         for move in valids:
-            new_state = executarMovimentos(tabuleiro, move)
-            _, score = minimax(new_state, profundidade-1, alpha, beta, False, opc)
+            new_state = executarMovimentos(tabuleiro, move) # Cria um novo estado de movimentos
+            _, score = minimax(new_state, profundidade-1, alpha, beta, False, opc) # Aplica a recursao
+            # Verifica a pontuacao
             if score > max_score:
                 max_score = score
                 best_move = move
+            # Verifica a poda
             alpha = max(alpha, max_score)
             if beta <= alpha:
                 break
@@ -297,13 +314,15 @@ def minimax(tabuleiro, profundidade, alpha, beta, maximizando_player, opc):
     else:
         min_score = float('inf')
         best_move = None
-        valids = pegaMovimentosValidos(tabuleiro, opc)
+        valids = pegaMovimentosValidos(tabuleiro, opc) # Lista de movimentos validos
         for move in valids:
-            new_state = executarMovimentos(tabuleiro, move)
-            _, score = minimax(new_state, profundidade-1, alpha, beta, True, opc)
+            new_state = executarMovimentos(tabuleiro, move) # Cria um novo estado de movimentos
+            _, score = minimax(new_state, profundidade-1, alpha, beta, True, opc) # Aplica a recursao
+            # Verifica a pontuacao
             if score < min_score:
                 min_score = score
                 best_move = move
+            # Verifica a poda
             beta = min(beta, min_score)
             if beta <= alpha:
                 break
@@ -313,15 +332,24 @@ def minimax(tabuleiro, profundidade, alpha, beta, maximizando_player, opc):
     
 
 def coresProximoMovimento(tabuleiro: list, cor: str):
+    """
+    Esta funcao faz uma estimativas de quais sao as cores dos proximos movimentos
+    ela usa uma politica de desempates por melhor vizinho, se existir um 
+    vizinho com a mesma cor e valor ela prioriza o indice desse movimento, e faz ao contrio
+    pega o pior vizinho tambem e cria uma zonha mista, assumindo que o oponente nao eh 
+    tao inteligente
+
+    """
     movimentosValidos = []      
     for i in range(4):
         for j in range(4):
             if tabuleiro[i][j] == EMPTY:
                 movimentosValidos.append((i, j))
     
-    cores = {AZUL : [VERMELHO, CINZA], VERMELHO: [CINZA], CINZA: []}
+    cores = {AZUL : [VERMELHO, CINZA], VERMELHO: [CINZA], CINZA: []} # Movimentos e seus sucessores
 
     movimentosEVizinhos = []
+    # Pega os seu melhor vizinho
     for movimento in movimentosValidos:
         vizinhos = []
         linha, coluna = movimento
@@ -345,7 +373,7 @@ def coresProximoMovimento(tabuleiro: list, cor: str):
             dic = {'cor': opcaoCor, 'valor': 1}
             movimento, vizinhos = movimentoEVizinhos
             
-            if all(dic != dicionario for dicionario in vizinhos):
+            if all(dic != dicionario for dicionario in vizinhos): # aqui ele simula o pior cenario de vizinhos
                 final.append((movimento, dic))
                 break
     
@@ -358,17 +386,31 @@ def coresProximoMovimento(tabuleiro: list, cor: str):
     
     for color in opcoesCores:
         if color not in valores:
-            mvVal = random.choice(movimentosValidos)
-            final.append((mvVal, {'cor': color, 'valor': 1}))
-
+            if len(movimentosValidos):
+                mvVal = random.choice(movimentosValidos)
+                final.append((mvVal, {'cor': color, 'valor': 1}))
+    
+    # Retorna uma lista de tuplas com o melhor indice e a cor correspondente desse na simulacao, se nao existir nenhuma ele randomiza
     return final
 
 
-
+def verificaSeTodosSaoZero(tabuleiro): # verifica tabuleiro vazio
+    tabs = 0
+    for i in range(4):
+     for j in range(4):
+        if tabuleiro[i][j] == EMPTY:
+            tabs += 1
+    return bool(tabs)
 
 
 def melhorLugarCor(tabuleiro: list, cor: str) -> tuple or bool:
-  
+
+    """
+    Define qual o melhor lugar para adicionar uma dada cor 
+    ela se baseia em uma simulacao de movimentos distintos e randomizados
+    criando varios estados e aplicando a minimax nesses estados para retorna o
+    melhor movimento
+    """
     movimentosValidos = []      
     for i in range(4):
         for j in range(4):
@@ -381,28 +423,29 @@ def melhorLugarCor(tabuleiro: list, cor: str) -> tuple or bool:
                     movimentosValidos.append((PLACE_GREY, i, j))
 
     def incrementaProximosmovimentos(tab: list, c: str) -> None:
-        movs = coresProximoMovimento(tab, c)
-        for mov in movs:
-            i, j = mov[0]
-            tab[i][j] = mov[1]
+        if verificaSeTodosSaoZero(tab):
+            movs = coresProximoMovimento(tab, c)
+            for mov in movs:
+                i, j = mov[0]
+                tab[i][j] = mov[1]
             
     melhores = []
-    profundidade = len(movimentosValidos)
+    profundidade = 5
     for valid in movimentosValidos:
         estado = deepcopy(tabuleiro)
         estado[valid[1]][valid[2]] = {'cor': valid[0], 'valor': 1}
-        incrementaProximosmovimentos(estado, cor)
-        mini_max = minimax(estado, profundidade, float('-inf'), float('inf'),True,  '')
-        melhores.append((mini_max[1],valid))
+        incrementaProximosmovimentos(estado, cor) # Cria um novo estado com uma nova simulacao
+        mini_max = minimax(estado, profundidade, float('-inf'), float('inf'),True,  '') # aplica a minimax
+        melhores.append((mini_max[1],valid)) # Salva os valores numa lista
     
     if len(melhores) >  0:
-        maximo = max(melhores, key=lambda x: x[0])
+        maximo = max(melhores, key=lambda x: x[0]) # obtemos o maximo desta lista
 
-        empates = [i for i in melhores if maximo[0] == i [0]]
+        empates = [i for i in melhores if maximo[0] == i [0]] # verificamos se existem empates
         
-        return  random.choice(empates)[1]
+        return  random.choice(empates)[1] # resolvemos esses empates randomizando os melhores
     else:
-        return False
+        return False # Retonamos false caso nao exista movimento
 
 
 
@@ -436,6 +479,9 @@ def setNovaPecaTabuleiro(tabuleiro: list, peca: tuple) -> None:
 
 
 def mainNovaPeca(tabuleiro: list, cor: str) -> str:
+    """
+    Funcao principal que une toda a logica de pegar a melhor posicao de uma peca
+    """
 
     def getFormataPeca(peca: tuple):
         return {'cor': peca[0], 'valor': 1}
@@ -452,15 +498,14 @@ def mainNovaPeca(tabuleiro: list, cor: str) -> str:
         return 'Quit'
 
 def mainMovimento(tabuleiro: list, opc= ''):
-    PROFUNDIDADE = 10
+    """
+    Funcao principal que une toda a logica de pegar o melhor slide
+    """
+    PROFUNDIDADE = 6
     
     def getMovimento(resultado: tuple) -> tuple:
         return resultado[0]
     
-    
-   
-
-   
     resultadoMinimax = minimax(tabuleiro, PROFUNDIDADE, float('-inf'), float('inf'),True,  '')
     movimento = getMovimento(resultadoMinimax)
     novo_tab =  executarMovimentos(tabuleiro, movimento)
@@ -473,6 +518,7 @@ def mainMovimento(tabuleiro: list, opc= ''):
 
 
 def getAcao(tipoCor: int) -> str:
+    # Pega uma acao
     opcoes = {0: 'A', 
               1: 'C', 
               2 : 'D1',
@@ -482,6 +528,7 @@ def getAcao(tipoCor: int) -> str:
     return opcoes[tipoCor]
 
 def acaoOponente(tipoCor: int ) -> str:
+    # pega uma acao do oponente
     opcoes = {0: 'V', 
               1: 'D1', 
               2 : 'A',
@@ -497,6 +544,9 @@ def escreveTabuleiro(tabAntes, tabDepois):
         tabAntes[i] = tabDepois[i]
 
 def executarMovimentosOponente(tabuleiro , opcao, contador, player):
+
+    # Exeutar moviemntos do oponente no meu tabuleiro, logica de jogo
+
     if opcao in ['U', 'D']:
         tab, sli = slideUpDwon(tabuleiro, opcao)
         escreveTabuleiro(tabuleiro, tab)
@@ -518,10 +568,10 @@ def executarMovimentosOponente(tabuleiro , opcao, contador, player):
 
 
 
-TABULEIRO = [[0,0,0, 0] for _ in range(4)]
+TABULEIRO = [[0,0,0, 0] for _ in range(4)] # tabuleiro
 
 def main():
-
+    # Funcao de execucao principal
     entrada = sys.stdin.readline().strip()
 
     player = entrada
@@ -564,6 +614,9 @@ def main():
             entrada = sys.stdin.readline().strip()
 
             oponente = executarMovimentosOponente(TABULEIRO, entrada, contadorJogadas, player)
+            if not oponente:
+                print('Quit')
+                sys.stdout.flush()
             # for i in TABULEIRO:
             #     print(i)
 
@@ -575,7 +628,6 @@ def main():
 
             
     else:
-        # Estou jogando como Order
         memoria = []
         while (True):
             entrada = sys.stdin.readline().strip()
@@ -598,14 +650,13 @@ def main():
             if contadorJogadas in [0,2,3]:
                 cor = acaoOponente(contadorJogadas)
                 posicao = mainNovaPeca(TABULEIRO, cor)
-                print(posicao, 'ultima', contadorJogadas)
                 sys.stdout.flush()
                 if posicao == 'Quit':
                     break
 
             if contadorJogadas in [1,4]:
                 dado = pegarQuantidadeDeVazios(TABULEIRO)
-                print('aqui', contadorJogadas, dado)
+            
                 if not dado:
                     print(mainMovimento(TABULEIRO))
                 else:
@@ -617,4 +668,5 @@ def main():
             contadorIteracoes += 1
 
 main()
+
 
