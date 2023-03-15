@@ -523,6 +523,8 @@ TABULEIRO = [[0,0,0, 0] for _ in range(4)]
 def main():
 
     entrada = sys.stdin.readline().strip()
+
+    player = entrada
     
     contadorJogadas = 0
     contadorIteracoes = 0
@@ -561,7 +563,7 @@ def main():
 
             entrada = sys.stdin.readline().strip()
 
-            oponente = executarMovimentosOponente(TABULEIRO, entrada, contadorJogadas, entrada)
+            oponente = executarMovimentosOponente(TABULEIRO, entrada, contadorJogadas, player)
             # for i in TABULEIRO:
             #     print(i)
 
@@ -590,7 +592,7 @@ def main():
                 break
 
             
-            oponente = executarMovimentosOponente(TABULEIRO, entrada, contadorJogadas, entrada)
+            oponente = executarMovimentosOponente(TABULEIRO, entrada, contadorJogadas, player)
             
 
             if contadorJogadas in [0,2,3]:
